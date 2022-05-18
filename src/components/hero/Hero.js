@@ -1,0 +1,28 @@
+import React from 'react'
+import "./Hero.css"
+import {AiOutlineSearch} from "react-icons/ai"
+
+const Hero = () => {
+  return (
+    <div className="hero">
+        <div className="content">
+            <h1>perfect place for you</h1>
+            <p className="search-text">Find your Dream home right now !</p>
+            <form action="" className="search">
+                <div>
+                    <input type="text" placeholder="search here..." />
+                </div>
+                <form className="radio">
+                    <input name ='radio' value="buy" type="radio" checked />
+                    <label htmlFor='buy'>Buy</label>
+                    <input name = 'radio' value="rent" type="radio" />
+                    <label htmlFor='rent'>Rent</label>
+                    <button type="submit"><AiOutlineSearch className="icon"/></button>
+                </form>
+            </form>
+        </div>
+    </div>
+  )
+}
+
+export default Hero
