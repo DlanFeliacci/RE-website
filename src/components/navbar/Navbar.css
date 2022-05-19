@@ -59,6 +59,7 @@
     }
     .navbar .active {
         right: 0;
+        
     }
     .navbar .nav-menu li a {
         margin-top: 1.5rem;

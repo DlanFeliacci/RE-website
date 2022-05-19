@@ -12,13 +12,13 @@ const Hero = () => {
                 <div>
                     <input type="text" placeholder="search here..." />
                 </div>
-                <form className="radio">
-                    <input name ='radio' value="buy" type="radio" checked />
+                <div className="radio">
+                    <input name ='radio' value="buy" type="radio" defaultChecked />
                     <label htmlFor='buy'>Buy</label>
                     <input name = 'radio' value="rent" type="radio" />
                     <label htmlFor='rent'>Rent</label>
                     <button type="submit"><AiOutlineSearch className="icon"/></button>
-                </form>
+                </div>
             </form>
         </div>
     </div>
