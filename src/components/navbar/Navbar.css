@@ -3,11 +3,13 @@
     height: 90px;
     top: 0;
     left: 0;
-    background-color: #fff;
-    border-bottom: 1px solid #eee;
+    background-color: #f8f5f5;
 }
-
-.navbar .container {
+.navbar .logo {
+    width: 120px;
+    height: 80px;
+}
+.navbar .contenaire {
     height: 100%;
     display: flex;
     justify-content: space-between;
@@ -15,18 +17,25 @@
     padding: 1rem;
 }
 
-.navbar span {
-    color: #5651e5;
-}
-
 .navbar .nav-menu {
     display: flex;
 }
+.navbar a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+}
 
 .navbar li {
-    padding: 1.6rem;
+    /* padding: 1.6rem; */
+    width: 150px;
     font-weight: bolder;
     font-size: larger;
+}
+.navbar a:hover {
+    color: rgba(54,106,142,1);
+    transition: .4s;
 }
 
 .burger {
@@ -35,6 +44,11 @@
 
 .navbar .icon {
     font-size: 1.5rem;
+}
+
+.contenaire .icon-nav {
+    margin-top: -2px;
+    margin-right: 2px;
 }
 
 
@@ -69,4 +83,7 @@
         margin-top: 0.3rem;
     }
 
+    .contenaire .icon-nav {
+        display: none;
+    }
 }

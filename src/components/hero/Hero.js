@@ -14,9 +14,9 @@ const Hero = () => {
                 </div>
                 <div className="radio">
                     <input name ='radio' value="buy" type="radio" defaultChecked />
-                    <label htmlFor='buy'>Buy</label>
+                    <label htmlFor='buy'>Vente</label>
                     <input name = 'radio' value="rent" type="radio" />
-                    <label htmlFor='rent'>Rent</label>
+                    <label htmlFor='rent'>Location</label>
                     <button type="submit"><AiOutlineSearch className="icon"/></button>
                 </div>
             </form>

@@ -21,6 +21,7 @@ const Rent = () => {
   
   return <div>
         <div>
+          <div><h2>En Location</h2></div>
           {loading? "is loading..." : response.map((iter) =>  {
           return (
             <Card sx={{ maxWidth: 345 }}>
