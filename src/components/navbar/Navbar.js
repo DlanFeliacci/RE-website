@@ -3,6 +3,7 @@ import { useState } from "react";
 import { HiMenuAlt2 } from "react-icons/hi";
 import { FaRegTimesCircle } from "react-icons/fa";
 import { BsFillHouseFill, BsInfoCircle, BsFillTelephoneFill } from "react-icons/bs";
+import { GoPlus } from 'react-icons/go'
 import {AiOutlineSearch} from "react-icons/ai"
 import Logo from "../../assets/logo-agence-nobackground.png"
 import { Link } from 'react-router-dom'
@@ -23,10 +24,15 @@ const Navbar = () => {
                     <a href="#"><BsFillHouseFill className="icon-nav"/>Accueil</a>
                   </li >
                 </Link>
-                <Link to='search'>
+                <Link to='recherche'>
                   <li onClick={handleClick}>
                     <a href="#"><AiOutlineSearch className="icon-nav"/>Chercher</a>
                   </li>
+                </Link>
+                <Link to='formulaire'>
+                  <li onClick={handleClick}>
+                    <a href="#"><GoPlus className="icon-nav"/>Ajouter</a>
+                  </li >
                 </Link>
                 <LinkScroll to="footer" smooth={true}  duration={500}>
                   <li onClick={handleClick}>

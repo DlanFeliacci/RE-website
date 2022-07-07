@@ -6,7 +6,7 @@ const Hero = () => {
   return (
     <div className="hero">
         <div className="content">
-            <h1>perfect place for you</h1>
+            <h1>Perfect place for you</h1>
             <p className="search-text">Find your Dream home right now !</p>
             <form action="" className="search">
                 <div>

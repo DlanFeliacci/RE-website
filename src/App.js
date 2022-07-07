@@ -1,5 +1,6 @@
 import Home from "./pages/Home";
-import Search from "./pages/Search";
+import SearchList from "./pages/searchList/SearchList";
+import Formulaire from "./pages/Formulaire";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
@@ -15,7 +16,8 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/recherche" element={<SearchList />} />
+          <Route path="formulaire" element={<Formulaire />} />
         </Routes>
         <Footer />
       </BrowserRouter>
