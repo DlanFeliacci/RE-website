@@ -8,24 +8,14 @@ import './SearchList.css'
 
 const SearchList = () => {
 
-  // const [biens, setBiens] = useState('');
+  const [biens, setBiens] = useState(null);
   
-  // useEffect(() => {
-  //   axios.get('http://localhost:5000/biens').then(res => {
-  //     setBiens(res.data);
-  //     setTimeout(() => console.log(biens),3000)
-  //   })
-  // },[]);
-
-  // let biens
-  // let [bite, setBite] = useState(false)
-  // const getBiens = async () => {
-  //   biens = await axios.get('http://localhost:5000/biens')
-  //   biens = biens.data
-  //   setBite(true)
-  // }
-  // getBiens()
-  // setTimeout(() => console.log(biens),5000)
+  useEffect(() => {
+    axios.get('http://localhost:5000/biens').then(res => {
+      setBiens(res.data);
+      setTimeout(() => console.log(biens),3000)
+    })
+  },[]);
 
 
   return (
@@ -87,10 +77,11 @@ const SearchList = () => {
             
           </div>
           <div className="listResult">
-            {/* {bite && biens.map((bien) => {
+            {biens && biens.map((bien) => {
               console.log(bien)
-              return (<p>zzzzzzzzz</p>)
-            })} */}
+              return (<Cards/>)
+            })}
+            {/* <Cards />
             <Cards />
             <Cards />
             <Cards />
@@ -98,8 +89,7 @@ const SearchList = () => {
             <Cards />
             <Cards />
             <Cards />
-            <Cards />
-            <Cards />
+            <Cards /> */}
           </div>
         </div>
       </div>

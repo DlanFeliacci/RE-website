@@ -30,7 +30,9 @@ const Formulaire = () => {
   // Tel format:
   const handleTelInput = e => {
     const formattedPhoneNumber = formatPhoneNumber(e.target.value);
-    setDataForm.tel(formattedPhoneNumber);
+    setDataForm({
+      ...dataForm, [e.target.name] : formattedPhoneNumber
+    })
   };
   function formatPhoneNumber(value){
     if (!value) return value;
@@ -230,10 +232,10 @@ const img = {
                         name="tel"
                         id="tel"
                         value={dataForm.tel}
-                        maxLength={20}
+                        maxLength={10}
                         autoComplete="on"
                         className=" p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                        onChange={handleChange}
+                        onChange={(e) => {handleChange(e); handleTelInput(e);}}
                         onKeyPress={(event) => {
                           if (!/[0-9]/.test(event.key)) {
                             event.preventDefault();
