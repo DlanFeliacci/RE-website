@@ -1,50 +1,137 @@
+/* eslint-disable jsx-a11y/alt-text */
 import axios from "axios";
-import { useDropzone } from "react-dropzone";
-import { useState } from "react";
+import { useDropzone } from "react-dropzone"; //library for drag and drop
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-// Adresse, Chambres, Vente/Achat, Pictures, Type du bien
-// (villa,appartement), Prix, description, tel, email
 
 const Formulaire = () => {
+  
   const [dataForm, setDataForm] = useState({
     firstName: "",
     lastName: '',
     email: '',
     tel: '',
-    wilaya : '',
+    country: 'Algérie',
+    wilaya : '16 - Alger',
     ville: '',
-    adresse: '',
-    transaction: '',
-    type: '', // appartement, villa...
+    address: '',
+    transaction: 'Vente',
+    type: 'Appartement', // appartement, villa...
     surface: "",
     chambre: "",
     pictures: "",
     prix: ''
   });
 
-  // Prevent Reloading the page when clicking on submit.
-  const handleSubmit = async (e) => {
+  
+  // const [error, setError] = useState(null);
+
+  // Tel format:
+  const handleTelInput = e => {
+    const formattedPhoneNumber = formatPhoneNumber(e.target.value);
+    setDataForm.tel(formattedPhoneNumber);
+  };
+  function formatPhoneNumber(value){
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 10) return phoneNumber;
+    return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 6)} ${phoneNumber.slice(6, 8)} ${phoneNumber.slice(8, 10)}`;
+  }
+  // ________________________________________________________________________________________
+  
+  // Prevent Reloading the page when clicking on submit:
+  const handleSubmit = (e) => {
     e.preventDefault(); //prevent browser reloading
+    // setError(null);
     console.log(e)
+    
+    // post request:
+    axios.post('http://localhost:5000/biens', dataForm).then(res => {  
+      console.log(res)
+    }).catch(err => console.log(err))
   }
 
   const handleChange = (e) => {
+    // if (e.target.value.includes(" ")) setError("You cannot use a space");
+    // else setError(null);
+    // dynamically update object property, allow user to write on form, have multiple React inputs having a different input properties and using the same onChange handler to update part of the state.
     setDataForm({
       ...dataForm, [e.target.name] : e.target.value
     })
     console.log('value is : ', e.target.value)
   }
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+  
+// Photo upload drag & drop:
+  // acceptedFiles variable stores all the file details,
+  // getRootProps variable defines the area where this drag-and-drop feature will work, and
+  // getInputs variable makes the input field droppable.
 
-  const files = acceptedFiles.map((file) => (
-    <li key={file.path}>
-       {file.path} - {file.size} bytes
-    </li>
- ));
+const thumbsContainer = {
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  marginTop: 16
+};
 
-  // Photo upload drag & drop
+const thumb = {
+  display: 'inline-flex',
+  borderRadius: 2,
+  border: '1px solid #eaeaea',
+  marginTop: 4,
+  marginBottom: 8,
+  marginRight: 8,
+  width: 100,
+  height: 100,
+  padding: 4,
+  boxSizing: 'border-box'
+};
+
+const thumbInner = {
+  display: 'flex',
+  minWidth: 0,
+  overflow: 'hidden',
+};
+
+const img = {
+  display: 'block',
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
+};
+
+  const [files, setFiles] = useState([]);
+  const {getRootProps, getInputProps} = useDropzone({
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png']
+    },
+    onDrop: acceptedFiles => {
+      setFiles(acceptedFiles.map(file => Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      })));
+    }
+  });
+
+  const thumbs = files.map(file => (
+    <div style={thumb} key={file.name}>
+      <div style={thumbInner}>
+        <img
+          src={file.preview}
+          style={img}
+          // Revoke data uri after image is loaded
+          onLoad={() => { URL.revokeObjectURL(file.preview) }}
+        />
+      </div>
+    </div>
+  ));
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks
+    files.forEach(file => URL.revokeObjectURL(file.preview));
+  }, [files]);
+
   //__________________________________________________________________
 
   return (
@@ -56,7 +143,7 @@ const Formulaire = () => {
       <div>
         <div className="md:grid md:grid-cols-2 md:gap-6 place-items-center">
           <div className="xl:w-screen md:w-screen px-5 md:px-20 mt-5 md:mt-0 md:col-span-2">
-            <form action="#" method="POST" onSubmit={handleSubmit}>
+            <form  onSubmit={handleSubmit}>
               <div className="shadow rounded-md overflow-hidden">
                 <div className="px-4 py-5 bg-indigo-50 space-y-6 sm:p-6">
                   <p className="text-xl text-gray-500 font-bold pb-3">Information Personelle</p>
@@ -73,10 +160,21 @@ const Formulaire = () => {
                         name="firstName"
                         id="firstName"
                         value={dataForm.firstName}
+                        maxLength={20}
                         autoComplete="given-name"
                         className=" p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         onChange={handleChange}
+                        onKeyPress={(event) => {
+                          if (!/^[a-zA-Z ]+$/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
                       />
+                      {/* {error && (
+                        <label style={{ color: "red" }}>
+                          {error}
+                        </label>)
+                      } */}
                     </div>
 
                     <div className="col-span-5 sm:col-span-2">
@@ -90,9 +188,15 @@ const Formulaire = () => {
                         name="lastName"
                         id="lastName"
                         value={dataForm.lastName}
+                        maxLength={20}
                         autoComplete="family-name"
                         className=" p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         onChange={handleChange}
+                        onKeyPress={(event) => {
+                          if (!/^[a-zA-Z ]+$/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
                       />
                     </div>
 
@@ -103,10 +207,11 @@ const Formulaire = () => {
                         Email
                       </label>
                       <input
-                        type="text"
+                        type="email"
                         name="email"
                         id="email"
                         value={dataForm.email}
+                        maxLength={30}
                         placeholder="you@example.com"
                         autoComplete="email"
                         className="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
@@ -125,6 +230,7 @@ const Formulaire = () => {
                         name="tel"
                         id="tel"
                         value={dataForm.tel}
+                        maxLength={20}
                         autoComplete="on"
                         className=" p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         onChange={handleChange}
@@ -145,7 +251,9 @@ const Formulaire = () => {
                       <select
                         id="country"
                         name="country"
-                        autoComplete="country-name"
+                        value={dataForm.country}
+                        onChange={handleChange}
+                        autoComplete="country"
                         className="mt-1 block w-full py-2 px-1 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option>Algérie</option>
                       </select>
@@ -157,21 +265,80 @@ const Formulaire = () => {
                         className="block text-sm font-medium text-gray-700">
                         Wilaya
                       </label>
-                      <input
+                      <select
                         placeholder="Alger"
                         type="text"
                         name="wilaya"
                         id="wilaya"
                         value={dataForm.wilaya}
                         // autoComplete="address-level2"
-                        className="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        className="mt-1 block w-full py-2 px-1 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         onChange={handleChange}
                         onKeyPress={(event) => {
                           if (!/^[a-zA-Z ]+$/.test(event.key)) {
                             event.preventDefault();
                           }
                         }}
-                      />
+                      >
+                        <option>01 - Adrar</option>
+                        <option>02 - Chlef</option>
+                        <option>03 - Laghouat</option>
+                        <option>04 - Oum El Bouaghi</option>
+                        <option>05 - Batna</option>
+                        <option>06 - Béjaïa</option>
+                        <option>07 - Biskra</option>
+                        <option>08 - Béchar</option>
+                        <option>09 - Blida</option>
+                        <option>10 - Bouira</option>
+                        <option>11 - Tamanrasset</option>
+                        <option>12 - Tébessa</option>
+                        <option>13 - Tlemcen</option>
+                        <option>14 - Tiaret</option>
+                        <option>15 - Tizi Ouzou</option>
+                        <option>16 - Alger</option>
+                        <option>17 - Djelfa</option>
+                        <option>18 - Jijel</option>
+                        <option>19 - Sétif</option>
+                        <option>20 - Saïda</option>
+                        <option>21 - Skikda</option>
+                        <option>22 - Sidi Bel Abbès</option>
+                        <option>23 - Anabba</option>
+                        <option>24 - Guelma</option>
+                        <option>25 - Constantine</option>
+                        <option>26 - Médéa</option>
+                        <option>27 - Mostaganem</option>
+                        <option>28 - Msila</option>
+                        <option>29 - Mascara</option>
+                        <option>30 - Ouargla</option>
+                        <option>31 - Oran</option>
+                        <option>32 - El Bayadh</option>
+                        <option>33 - Illizi</option>
+                        <option>34 - Bordj Bou Arreridj</option>
+                        <option>35 - Boumerdès</option>
+                        <option>36 - El Tarf</option>
+                        <option>37 - Tindouf</option>
+                        <option>38 - Tissemsilt</option>
+                        <option>39 - El Oued</option>
+                        <option>40 - Khenchela</option>
+                        <option>41 - Souk Ahras</option>
+                        <option>42 - Tipaza</option>
+                        <option>43 - Mila</option>
+                        <option>44 - Aïn Defla</option>
+                        <option>45 - Naâma</option>
+                        <option>46 - Aïn Témouchent</option>
+                        <option>47 - Ghardaïa</option>
+                        <option>48 - Relizane</option>
+                        <option>49 - Timimoun</option>
+                        <option>50 - Bordj Badji Mokhtar</option>
+                        <option>51 - Ouled Djellal</option>
+                        <option>52 - Béni Abbès</option>
+                        <option>53 - In Salah</option>
+                        <option>54 - In Guezzam</option>
+                        <option>55 - Touggourt</option>
+                        <option>56 - Djanet</option>
+                        <option>57 - El M'Ghair</option>
+                        <option>58 - El Meniaa</option>
+                      </select>
                     </div>
 
                     <div className="col-span-2 sm:col-span-2">
@@ -206,7 +373,7 @@ const Formulaire = () => {
                     </div>
                     <div className="col-span-2 sm:col-span-1">
                       <label
-                        htmlFor="country"
+                        htmlFor="transaction"
                         className="block text-sm font-medium text-gray-700">
                        Transaction
                       </label>
@@ -214,6 +381,8 @@ const Formulaire = () => {
                         id="transaction"
                         name="transaction"
                         autoComplete="transaction"
+                        value={dataForm.transaction}
+                        onChange={handleChange}
                         className="mt-1 block w-full py-2 px-1 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       >
                         <option>Vente</option>
@@ -230,6 +399,8 @@ const Formulaire = () => {
                       <select
                         id="type"
                         name="type"
+                        value={dataForm.type}
+                        onChange={handleChange}
                         autoComplete="type-name"
                         className="mt-1 block w-full py-2 px-1 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option>Appartement</option>
@@ -268,6 +439,7 @@ const Formulaire = () => {
                         name="surface"
                         id="surface"
                         value={dataForm.surface}
+                        maxLength={10}
                         className="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         onChange={handleChange}
                         onKeyPress={(e) => !/[0-9.]/.test(e.key) && e.preventDefault()}
@@ -286,6 +458,7 @@ const Formulaire = () => {
                         name="prix"
                         id="prix"
                         value={dataForm.prix}
+                        maxLength={20}
                         className="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         onChange={handleChange}
                         onKeyPress={(e) => !/[0-9.]/.test(e.key) && e.preventDefault()}
@@ -301,6 +474,9 @@ const Formulaire = () => {
                       <input
                         type="text"
                         name="address"
+                        value={dataForm.address}
+                        maxLength={60}
+                        onChange={handleChange}
                         id="address"
                         autoComplete="address"
                         className=" p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
@@ -320,6 +496,7 @@ const Formulaire = () => {
                         id="description"
                         name="description"
                         value={dataForm.description}
+                        minLength={10}
                         rows={3}
                         className="p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                         placeholder="Bonjour, je met en vente..."
@@ -334,7 +511,8 @@ const Formulaire = () => {
                     <label className="block text-sm font-medium text-gray-700">
                       Photos
                     </label>
-                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:bg-indigo-100 " {...getRootProps()}>
+                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 hover:border-indigo-500 border-dashed rounded-md cursor-pointer  bg-white" 
+                    {...getRootProps()}>
                       <div className="space-y-1 text-center">
                         <svg
                           className="mx-auto h-12 w-12 text-gray-400"
@@ -350,23 +528,21 @@ const Formulaire = () => {
                             strokeLinejoin="round"
                           />
                         </svg>
-                        <div className="flex text-sm text-gray-600">
+                        <div className="flex justify-center text-sm text-gray-600">
                           <p className="pl-1">Glissez des images ici ou &nbsp;</p>
-                          <aside>
-                            <ul>{files}</ul>
-                          </aside> 
                           <label
-                            htmlFor="file-upload"
-                            // {...getRootProps()}
+                            htmlFor="pictures"
                             className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                            <button className="p-0.5">
-                              <span>Télecharger</span>
-                            </button>
+                            <div className="px-0.5">
+                              <span>Parcourir</span>
+                            </div>
                             <input
-                              id="file-upload"
-                              name="file-upload"
+                              id="pictures"
+                              name="pictures"
                               type="file"
-                              multiple='true'
+                              multiple={true}
+                              value={dataForm.pictures}
+                              onChange={handleChange}
                               className="sr-only"
                               accept=".png, .jpg, .jpeg"
                               {...getInputProps()}
@@ -374,6 +550,9 @@ const Formulaire = () => {
                           </label>
                         </div>
                         <p className="text-xs text-gray-500">PNG, JPG, JPEG</p>
+                        <aside style={thumbsContainer}>
+                            {thumbs}  
+                        </aside> 
                       </div>
                     </div>
                   </div>
@@ -390,6 +569,12 @@ const Formulaire = () => {
                     </button>
                   </div>
                 </div>
+                {dataForm.firstName && <div className="mt-3">
+                <strong>Output:</strong><br />
+                <pre>{JSON.stringify(dataForm.firstName, null, 2)}</pre>
+                </div>
+                }
+                console.log({JSON.stringify(dataForm.firstName, null, 2)})
               </div>
             </form>
           </div>

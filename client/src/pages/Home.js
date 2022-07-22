@@ -9,7 +9,6 @@ import { motion } from 'framer-motion'
 
 
 const Home = () => {
-    console.log("first")
   return (
     <motion.div 
     initial={{opacity: 0}}

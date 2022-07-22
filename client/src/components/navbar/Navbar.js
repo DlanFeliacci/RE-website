@@ -21,27 +21,27 @@ const Navbar = () => {
             <ul className={click ? 'nav-menu active' : 'nav-menu'}>
                 <Link to='/'>
                   <li onClick={handleClick}>
-                    <a href="#"><BsFillHouseFill className="icon-nav"/>Accueil</a>
+                    <a href="1"><BsFillHouseFill className="icon-nav"/>Accueil</a>
                   </li >
                 </Link>
                 <Link to='recherche'>
                   <li onClick={handleClick}>
-                    <a href="#"><AiOutlineSearch className="icon-nav"/>Chercher</a>
+                    <a href="2"><AiOutlineSearch className="icon-nav"/>Chercher</a>
                   </li>
                 </Link>
                 <Link to='formulaire'>
                   <li onClick={handleClick}>
-                    <a href="#"><GoPlus className="icon-nav"/>Ajouter</a>
+                    <a href="3"><GoPlus className="icon-nav"/>Ajouter</a>
                   </li >
                 </Link>
                 <LinkScroll to="footer" smooth={true}  duration={500}>
                   <li onClick={handleClick}>
-                    <a href="#"><BsInfoCircle className="icon-nav"/>À propos</a>
+                    <a href="4"><BsInfoCircle className="icon-nav"/>À propos</a>
                   </li> 
                 </LinkScroll>
                 <LinkScroll to="footer" smooth={true}  duration={500}>
                   <li onClick={handleClick}>
-                    <a href="footer"><BsFillTelephoneFill className="icon-nav"/>Contact</a>
+                    <a href="5"><BsFillTelephoneFill className="icon-nav"/>Contact</a>
                   </li>
                 </LinkScroll>
             </ul>
