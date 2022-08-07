@@ -1,7 +1,9 @@
+import {FaMapMarkerAlt, FaBed} from "react-icons/fa"
 import ChambreIMG from "../../assets/3.jpg";
 import './Cards.css'
 
-const Cards = () => {
+const Cards = (props) => {
+  
   return (
     <div className="searchItem">
       <img
@@ -9,25 +11,22 @@ const Cards = () => {
         alt="img"
         className="siImg"
       />
-      <div className="siDesc">
-        <h1 className="siTitle">Tower Street Apartments</h1>
-        <span className="siDistance">500m from center</span>
-        <span className="siTaxiOp">Vente</span>
-        <span className="siSubtitle">
-          Studio Apartment with Air conditioning
-        </span>
-        <span className="siFeatures">
-          Entire studio • 1 bathroom • 21m² 1 full bed
-        </span>
-        <span className="siCancelOp">Free cancellation </span>
-        <span className="siCancelOpSubtitle">
-          You can cancel later, so lock in this great price today!
+      <div className="desc">
+        <h1 className="titre">{props.bien.type} à {props.bien.ville}</h1>
+        <span className="transaction">{props.bien.transaction}</span>
+        <span className="chambreETsurface">
+        <div className='cont-address'><FaBed className="address-icon"/><p>{`F${props.bien.chambre} • ${props.bien.surface}m²`}</p></div>
+          
+          </span>
+        <span className="address">
+          <div className='cont-address'><FaMapMarkerAlt className='address-icon'/><p>{props.bien.address}</p></div>
+          
         </span>
       </div>
       <div className="siDetails">
         <div className="siDetailTexts">
-          <span className="siPrice">500.000 &nbsp; <small>Dzd</small></span>
-          <button className="siCheckButton">Plus</button>
+          <span className="prix">{props.bien.prix} &nbsp;<p className="text-lg pt-1">Da</p></span>
+          <button className="plus">Détails</button>
         </div>
       </div>
     </div>

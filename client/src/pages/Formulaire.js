@@ -2,11 +2,64 @@
 import axios from "axios";
 import { useDropzone } from "react-dropzone"; //library for drag and drop
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 
 
 const Formulaire = () => {
   
+  const { register, handleSubmit,  formState: { errors }  } = useForm();
+  const onSubmit = (e) => {
+    console.log(files)
+
+    dataForm.pictures = files[0].name // à changer..............
+
+    const fd = new FormData();
+    for ( let key in dataForm ) {
+      if (key === 'pictures') {
+        fd.append(key, files[0], dataForm[key])
+      } else{
+        fd.append(key, dataForm[key])
+      }
+
+    }
+    for (const pair of fd.entries()) {
+      console.log(`${pair[0]}, ${pair[1]}`);
+    }
+    console.log(e)
+    // post request (to server):
+    axios.post('http://localhost:5000/biens', fd, {
+      headers: {'Content-Type': 'multipart/form-data'}
+    }).then(res => {  
+      console.log(res)
+    }).catch(err => console.log(err))
+  };
+
+  const handleChange = (e) => {
+    // dynamically update object property, allow user to write on form, have multiple React inputs having a different input properties and using the same onChange handler to update part of the state.
+    setDataForm({
+      ...dataForm, [e.target.name] : e.target.value
+    })
+    console.log('value is : ', e.target.value)
+  }
+
+
+// get api from algerian communes____________________________________________________
+// const [commune, setCommune] = useState(null)
+// useEffect(()=>{
+//   axios
+//   .get('https://algerian-cities.bel4.com/api/communes')
+//   .then(response => {
+//     console.log(response.data.map((iter) => {
+//       return iter.name
+//     }))
+//     setCommune(response.data)
+//   })
+//   .catch(error => console.log(error.message))
+// }, []);
+// __________________________________________________________________________________
+
+
   const [dataForm, setDataForm] = useState({
     firstName: "",
     lastName: '',
@@ -23,9 +76,6 @@ const Formulaire = () => {
     pictures: "",
     prix: ''
   });
-
-  
-  // const [error, setError] = useState(null);
 
   // Tel format:
   const handleTelInput = e => {
@@ -44,35 +94,27 @@ const Formulaire = () => {
   // ________________________________________________________________________________________
   
   // Prevent Reloading the page when clicking on submit:
-  const handleSubmit = (e) => {
-    e.preventDefault(); //prevent browser reloading
-    // setError(null);
-    console.log(e)
+  // const handleSubmit = (e) => {
+  //   e.preventDefault(); //prevent browser reloading
+  //   // setError(null);
+  //   console.log(e)
     
-    // post request:
-    axios.post('http://localhost:5000/biens', dataForm).then(res => {  
-      console.log(res)
-    }).catch(err => console.log(err))
-  }
-
-  const handleChange = (e) => {
-    // if (e.target.value.includes(" ")) setError("You cannot use a space");
-    // else setError(null);
-    // dynamically update object property, allow user to write on form, have multiple React inputs having a different input properties and using the same onChange handler to update part of the state.
-    setDataForm({
-      ...dataForm, [e.target.name] : e.target.value
-    })
-    console.log('value is : ', e.target.value)
-  }
+  //   // post request:
+  //   axios.post('http://localhost:5000/biens', dataForm).then(res => {  
+  //     console.log(res)
+  //   }).catch(err => console.log(err))
+  // }
 
   
-// Photo upload drag & drop:
+  
+// Photo upload drag & drop:___________________________________________________________________________
   // acceptedFiles variable stores all the file details,
   // getRootProps variable defines the area where this drag-and-drop feature will work, and
   // getInputs variable makes the input field droppable.
 
 const thumbsContainer = {
   display: 'flex',
+  justifyContent: 'center',
   flexDirection: 'row',
   flexWrap: 'wrap',
   marginTop: 16
@@ -98,7 +140,7 @@ const thumbInner = {
 };
 
 const img = {
-  display: 'block',
+  display: 'bloc',
   width: '100%',
   height: '100%',
   objectFit: 'contain'
@@ -134,7 +176,7 @@ const img = {
     files.forEach(file => URL.revokeObjectURL(file.preview));
   }, [files]);
 
-  //__________________________________________________________________
+  //___________________________________________________________________________________________
 
   return (
     <motion.div
@@ -145,26 +187,27 @@ const img = {
       <div>
         <div className="md:grid md:grid-cols-2 md:gap-6 place-items-center">
           <div className="xl:w-screen md:w-screen px-5 md:px-20 mt-5 md:mt-0 md:col-span-2">
-            <form  onSubmit={handleSubmit}>
+            <form  onSubmit={handleSubmit(onSubmit)}>
               <div className="shadow rounded-md overflow-hidden">
                 <div className="px-4 py-5 bg-indigo-50 space-y-6 sm:p-6">
-                  <p className="text-xl text-gray-500 font-bold pb-3">Information Personelle</p>
+                  <p className="text-xl text-black font-bold pb-3">Information Personelle</p>
                   <div className="grid grid-cols-6 gap-6">
                     
                     <div className="col-span-5 sm:col-span-2">
                       <label
                         htmlFor="first-name"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Prénom
                       </label>
                       <input
+                        {...register("firstName", { required: "champ requis", minLength:{value:3, message:"3 lettres minimum"}})}
                         type="text"
                         name="firstName"
                         id="firstName"
                         value={dataForm.firstName}
-                        maxLength={20}
+                        maxLength={15}
                         autoComplete="given-name"
-                        className=" p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        className="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         onChange={handleChange}
                         onKeyPress={(event) => {
                           if (!/^[a-zA-Z ]+$/.test(event.key)) {
@@ -172,11 +215,7 @@ const img = {
                           }
                         }}
                       />
-                      {/* {error && (
-                        <label style={{ color: "red" }}>
-                          {error}
-                        </label>)
-                      } */}
+                      {errors.firstName && <small style={{color: '#FF6666'}}>{errors.firstName.message}</small>}
                     </div>
 
                     <div className="col-span-5 sm:col-span-2">
@@ -186,6 +225,7 @@ const img = {
                         Nom
                       </label>
                       <input
+                        // {...register("lastName", { required: "champ requis", minLength:{value:3, message:"3 lettres minimum"}})}
                         type="text"
                         name="lastName"
                         id="lastName"
@@ -200,12 +240,13 @@ const img = {
                           }
                         }}
                       />
+                      {/* {errors.lastName && <small style={{color: 'red'}}>{errors.lastName.message}</small>} */}
                     </div>
 
                     <div className="col-span-3 sm:col-span-4">
                       <label
                         htmlFor="email"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Email
                       </label>
                       <input
@@ -224,10 +265,11 @@ const img = {
                     <div className="col-span-3 sm:col-span-2">
                       <label
                         htmlFor="tel"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Téléphone
                       </label>
                       <input
+                      {...register("tel", { required: "champ requis", minLength:{value:9, message:"9 chiffres minimum"}})}
                         type="tel"
                         name="tel"
                         id="tel"
@@ -236,18 +278,19 @@ const img = {
                         autoComplete="on"
                         className=" p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         onChange={(e) => {handleChange(e); handleTelInput(e);}}
-                        onKeyPress={(event) => {
-                          if (!/[0-9]/.test(event.key)) {
-                            event.preventDefault();
-                          }
-                        }}
+                        // onKeyPress={(event) => {
+                        //   if (!/[0-9]/.test(event.key)) {
+                        //     event.preventDefault();
+                        //   }
+                        // }}
                       />
+                      {errors.tel && <small style={{color: '#FF6666'}}>{errors.tel.message}</small>}
                     </div>
 
                     <div className="col-span-2 sm:col-span-2">
                       <label
                         htmlFor="country"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Pays
                       </label>
                       <select
@@ -264,7 +307,7 @@ const img = {
                     <div className="col-span-2 sm:col-span-2">
                       <label
                         htmlFor="wilaya"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Wilaya
                       </label>
                       <select
@@ -276,11 +319,6 @@ const img = {
                         // autoComplete="address-level2"
                         className="mt-1 block w-full py-2 px-1 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         onChange={handleChange}
-                        onKeyPress={(event) => {
-                          if (!/^[a-zA-Z ]+$/.test(event.key)) {
-                            event.preventDefault();
-                          }
-                        }}
                       >
                         <option>01 - Adrar</option>
                         <option>02 - Chlef</option>
@@ -346,24 +384,30 @@ const img = {
                     <div className="col-span-2 sm:col-span-2">
                       <label
                         htmlFor="ville"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Ville
                       </label>
-                      <input
-                        placeholder="Kouba"
+                      <select 
+                      // {...register("ville", { required: "champ requis", minLength:{value:3, message:"3 lettres minimum"}})}
+                        placeholder="Commune"
                         type="text"
                         name="ville"
                         id="ville"
-                        value={dataForm.ville}
+                        // value={dataForm.ville}
                         autoComplete="address-level1"
-                        className="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        className="mt-1 block w-full py-2 px-1 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         onChange={handleChange}
                         onKeyPress={(event) => {
                           if (!/^[a-zA-Z ]+$/.test(event.key)) {
                             event.preventDefault();
                           }
-                        }}
-                      />
+                        }}>
+                        {/* {commune && commune.map((iter, i) => {
+                          // return (<option value={dataForm.ville}>{iter.name}</option>)
+                          return (<option key={i}>{iter.name}</option>)
+                        })} */}
+                      </select>
+                      {/* {errors.ville && <small style={{color: '#FF6666'}}>{errors.ville.message}</small>} */}
                     </div>
                     <div className="col-span-6 sm:col-span-6">
                         <div className="sm:block" aria-hidden="true">
@@ -371,12 +415,12 @@ const img = {
                             <div className="border-t border-dashed border-gray-500" />
                           </div>
                         </div>
-                        <p className="text-xl text-gray-500 font-bold pb-4">Information sur l'immobilier</p> 
+                        <p className="text-xl text-black font-bold pb-4">Information sur l'immobilier</p> 
                     </div>
                     <div className="col-span-2 sm:col-span-1">
                       <label
                         htmlFor="transaction"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                        Transaction
                       </label>
                       <select
@@ -395,7 +439,7 @@ const img = {
                     <div className="col-span-2 sm:col-span-1">
                       <label
                         htmlFor="type"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                        Type
                       </label>
                       <select
@@ -413,10 +457,11 @@ const img = {
                     <div className="col-span-2 sm:col-span-1">
                       <label
                         htmlFor="chambre"
-                        className="block text-sm font-medium text-gray-700">
-                        chambres
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
+                        Pièces
                       </label>
                       <input
+                      {...register("chambre", { required: "champ requis" })}
                         type="number"
                         name="chambre"
                         id="chambre"
@@ -425,17 +470,19 @@ const img = {
                         value={dataForm.chambre}
                         className="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         onChange={handleChange}
-                        // onKeyPress={(e) => !/[0-9.]/.test(e.key) && e.preventDefault()}
+                        onKeyPress={(e) => !/[0-9]/.test(e.key) && e.preventDefault()}
                       />
+                      {errors.chambre && <small style={{color: '#FF6666'}}>{errors.chambre.message}</small>}
                     </div>
 
                     <div className="col-span-3 sm:col-span-1">
                       <label
                         htmlFor="surface"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Surface
                       </label>
                       <input
+                      {...register("surface", { required: "champ requis", minLength:{value:2, message:"2 chiffres minimum"}})}
                         placeholder="m²"
                         type="surface"
                         name="surface"
@@ -446,12 +493,13 @@ const img = {
                         onChange={handleChange}
                         onKeyPress={(e) => !/[0-9.]/.test(e.key) && e.preventDefault()}
                       />
+                      {errors.surface && <small style={{color: '#FF6666'}}>{errors.surface.message}</small>}
                     </div>
 
                     <div className="col-span-3 sm:col-span-1">
                       <label
                         htmlFor="prix"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Prix
                       </label>
                       <input
@@ -470,19 +518,21 @@ const img = {
                     <div className="col-span-6">
                       <label
                         htmlFor="address"
-                        className="block text-sm font-medium text-gray-700">
+                        className="block text-sm font-medium text-gray-700 after:content-['*'] after:ml-1 after:text-red-500">
                         Adresse
                       </label>
                       <input
+                      {...register("address", { required: "champ requis", minLength:{value:2, message:"2 lettres minimum"}})}
                         type="text"
                         name="address"
                         value={dataForm.address}
-                        maxLength={60}
+                        maxLength={80}
                         onChange={handleChange}
                         id="address"
                         autoComplete="address"
                         className=" p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       />
+                      {errors.address && <small style={{color: '#FF6666'}}>{errors.address.message}</small>}
                     </div>
 
                     
@@ -543,8 +593,7 @@ const img = {
                               name="pictures"
                               type="file"
                               multiple={true}
-                              value={dataForm.pictures}
-                              onChange={handleChange}
+                              // value={dataForm.pictures}
                               className="sr-only"
                               accept=".png, .jpg, .jpeg"
                               {...getInputProps()}
@@ -571,12 +620,12 @@ const img = {
                     </button>
                   </div>
                 </div>
-                {dataForm.firstName && <div className="mt-3">
+                {/* {dataForm.firstName && <div className="mt-3">
                 <strong>Output:</strong><br />
                 <pre>{JSON.stringify(dataForm.firstName, null, 2)}</pre>
                 </div>
                 }
-                console.log({JSON.stringify(dataForm.firstName, null, 2)})
+                console.log({JSON.stringify(dataForm.firstName, null, 2)}) */}
               </div>
             </form>
           </div>

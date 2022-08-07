@@ -9,9 +9,9 @@ const Footer = () => {
   return (
     <div name="footer" className="footer">
         <div className="social">
-            <a href="https://www.facebook.com/profile.php?id=100013311584780" target="_blank" rel="noopener noreferrer"><FaFacebook className="icon"/></a>
-            <a href="#footer" ><BiMailSend className="icon"/></a>
-            <a href="#footer" ><FaViber className="icon"/></a>
+            <a href="https://www.facebook.com/profile.php?id=100013311584780" target="_blank" rel="noopener noreferrer"><FaFacebook className="icon hover:animate-bounce"/></a>
+            <a href="#footer" ><BiMailSend className="icon hover:animate-bounce"/></a>
+            <a href="#footer" ><FaViber className="icon hover:animate-bounce"/></a>
         </div>
         <div className="contain">
             <div className="col">

@@ -7,10 +7,10 @@ const Hero = () => {
     <div className="hero">
         <div className="content">
             <h1>Perfect place for you</h1>
-            <p className="search-text">Find your Dream home right now !</p>
+            <p className="search-text">Déposez une annonce ou cherchez un bien en deux cliques !</p>
             <form action="" className="search">
                 <div>
-                    <input type="text" placeholder="search here..." />
+                    <input type="text" placeholder="Recherche..." />
                 </div>
                 <div className="radio">
                     <input name ='radio' value="buy" type="radio" defaultChecked />

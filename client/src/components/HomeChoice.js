@@ -1,7 +1,6 @@
 import img7 from "../assets/7.jpg";
 import img10 from "../assets/10.jpg";
 import img11 from "../assets/11.jpg";
-import Suppr from './Suppr'
 
 const HomeChoice = () => {
   return (
@@ -19,7 +18,6 @@ const HomeChoice = () => {
         </div>
       
       </div>
-      <Suppr/>
     </>
   );
 };
