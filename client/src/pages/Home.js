@@ -7,7 +7,6 @@ import HomeChoice from "../components/HomeChoice";
 // import Buy from "../components/buy/Buy";
 import { motion } from 'framer-motion'
 
-
 const Home = () => {
   return (
     <motion.div 

@@ -7,7 +7,7 @@ const Cards = (props) => {
   return (
     <div className="searchItem">
       <img
-        src={ChambreIMG}
+        src={`http://localhost:5000${props.bien.pictures}`}
         alt="img"
         className="siImg"
       />
@@ -19,8 +19,8 @@ const Cards = (props) => {
           
           </span>
         <span className="address">
-          <div className='cont-address'><FaMapMarkerAlt className='address-icon'/><p>{props.bien.address}</p></div>
-          
+          <div className='cont-address'><FaMapMarkerAlt className='address-icon'/><p>{`${props.bien.wilaya}, ${props.bien.ville}`}</p></div>
+          {/* {`${props.bien.wilaya}, ${props.bien.ville}`} */}
         </span>
       </div>
       <div className="siDetails">

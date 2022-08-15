@@ -3,26 +3,25 @@ import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import Cards from '../../components/cards/Cards.js'
 import './SearchList.css'
+import commune from "../../json/districts.json"
 // import Suppr from '../components/Suppr.js'
 
 
 const SearchList = () => {
 
-  const [commune, setCommune] = useState(null)
-  useEffect(()=>{
-    axios
-    .get('https://algerian-cities.bel4.com/api/communes')
-    .then(response => {
-      console.log(response.data.map((iter) => {
-        return iter.name
-      }))
-      setCommune(response.data)
-    })
-    .catch(error => console.log(error.message))
-  }, []);
+  // const [commune, setCommune] = useState(null)
+  // useEffect(()=>{
+  //   axios
+  //   .get('https://algerian-cities.bel4.com/api/communes')
+  //   .then(response => {
+  //     console.log(response.data.map((iter) => {
+  //       return iter.name
+  //     }))
+  //     setCommune(response.data)
+  //   })
+  //   .catch(error => console.log(error.message))
+  // }, []);
 
-
-  
 
   const [biens, setBiens] = useState(null);
   
@@ -46,7 +45,7 @@ const SearchList = () => {
           <div className="listSearch">
             <h1 className="lsTitle">Que cherchez vous?</h1>
             <div className="lsItem">
-              <label>Type de Bien</label>
+              <label>Type de Transaction</label>
               <select className='mt-1 block w-full py-2 px-1 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' defaultValue="selected">
                 <option value="selected">Vente</option>
                 <option>Location</option>
@@ -120,6 +119,7 @@ const SearchList = () => {
             <div className="lsItem">
               <label>Commune</label>
               <select 
+              defaultValue="true"
               type="text"
               name="ville"
               id="ville"
@@ -127,7 +127,7 @@ const SearchList = () => {
               >
                 {commune && commune.map((iter, i) => {
                 // return (<option value={dataForm.ville}>{iter.name}</option>)
-                return (<option key={i}>{iter.name}</option>)
+                return (<option key={i} value={i === 583}>{iter.name}</option>)
               })}
               </select>
               

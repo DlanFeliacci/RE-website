@@ -4,13 +4,19 @@ import { useDropzone } from "react-dropzone"; //library for drag and drop
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
+import commune from "../json/districts.json"
+import {FaCheckCircle} from 'react-icons/fa'
+import {VscError} from 'react-icons/vsc'
 
 
 const Formulaire = () => {
-  
+  const [isSuccess , setIsSuccess] = useState(false) 
+  const [isFail , setIsFail] = useState(false) 
+
+
   const { register, handleSubmit,  formState: { errors }  } = useForm();
   const onSubmit = (e) => {
-    console.log(files)
+    console.log(Object.keys(errors).length)
 
     dataForm.pictures = files[0].name // à changer..............
 
@@ -21,8 +27,8 @@ const Formulaire = () => {
       } else{
         fd.append(key, dataForm[key])
       }
-
     }
+
     for (const pair of fd.entries()) {
       console.log(`${pair[0]}, ${pair[1]}`);
     }
@@ -31,8 +37,16 @@ const Formulaire = () => {
     axios.post('http://localhost:5000/biens', fd, {
       headers: {'Content-Type': 'multipart/form-data'}
     }).then(res => {  
-      console.log(res)
-    }).catch(err => console.log(err))
+      setIsSuccess(true)
+      setTimeout(() => {
+        setIsSuccess(false)
+      },5000)
+    }).catch(err => {
+      setIsFail(true)
+      setTimeout(() => {
+        setIsFail(false)
+      },5000)
+    })
   };
 
   const handleChange = (e) => {
@@ -40,7 +54,7 @@ const Formulaire = () => {
     setDataForm({
       ...dataForm, [e.target.name] : e.target.value
     })
-    console.log('value is : ', e.target.value)
+    // console.log(e.target.value)
   }
 
 
@@ -48,7 +62,7 @@ const Formulaire = () => {
 // const [commune, setCommune] = useState(null)
 // useEffect(()=>{
 //   axios
-//   .get('https://algerian-cities.bel4.com/api/communes')
+//   .get('https://github.com/lotfio/algeria-administrative-divisions/blob/58e8e3eb65f99c553fdf4737ba92d0a45221f66b/json/districts.json')
 //   .then(response => {
 //     console.log(response.data.map((iter) => {
 //       return iter.name
@@ -67,7 +81,7 @@ const Formulaire = () => {
     tel: '',
     country: 'Algérie',
     wilaya : '16 - Alger',
-    ville: '',
+    ville: 'Hydra',
     address: '',
     transaction: 'Vente',
     type: 'Appartement', // appartement, villa...
@@ -393,7 +407,7 @@ const img = {
                         type="text"
                         name="ville"
                         id="ville"
-                        // value={dataForm.ville}
+                        value={dataForm.ville}
                         autoComplete="address-level1"
                         className="mt-1 block w-full py-2 px-1 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         onChange={handleChange}
@@ -402,10 +416,10 @@ const img = {
                             event.preventDefault();
                           }
                         }}>
-                        {/* {commune && commune.map((iter, i) => {
+                        {commune && commune.map((iter, i) => {
                           // return (<option value={dataForm.ville}>{iter.name}</option>)
                           return (<option key={i}>{iter.name}</option>)
-                        })} */}
+                        })}
                       </select>
                       {/* {errors.ville && <small style={{color: '#FF6666'}}>{errors.ville.message}</small>} */}
                     </div>
@@ -593,7 +607,6 @@ const img = {
                               name="pictures"
                               type="file"
                               multiple={true}
-                              // value={dataForm.pictures}
                               className="sr-only"
                               accept=".png, .jpg, .jpeg"
                               {...getInputProps()}
@@ -620,12 +633,13 @@ const img = {
                     </button>
                   </div>
                 </div>
-                {/* {dataForm.firstName && <div className="mt-3">
-                <strong>Output:</strong><br />
-                <pre>{JSON.stringify(dataForm.firstName, null, 2)}</pre>
-                </div>
-                }
-                console.log({JSON.stringify(dataForm.firstName, null, 2)}) */}
+                {isSuccess && <div className="flex justify-center py-2">
+                  <div className="flex justify-center w-[40%] h-[80px]  bg-green-100 items-center"><p className="text-green-500 flex"><FaCheckCircle className="mt-1 mr-2"/>Envoyé avec succès.</p></div>
+                  </div>}
+                {(Boolean(Object.keys(errors).length) || isFail) && <div className="flex justify-center py-2">
+                  <div className="flex justify-center w-[40%] h-[80px] bg-rose-100 items-center"><p className="text-red-500 flex"><VscError className="mt-1 mr-2"/>Erreur, veuillez réessayer ultérieurement.</p></div>
+                  </div>}
+
               </div>
             </form>
           </div>

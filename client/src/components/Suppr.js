@@ -4,6 +4,7 @@ import Tempic from "../assets/3.jpg";
 const Suppr = () => {
   
   return (
+   
     <div className="relative flex min-h-screen flex-col justify-center">
       <div className="mx-auto flex w-96 flex-col justify-center bg-white rounded-2xl shadow-xl shadow-slate-300/60">
         <img
